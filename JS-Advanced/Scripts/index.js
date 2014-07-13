@@ -99,4 +99,18 @@
     });
     console.log(r);
 
+    //Problem 11: Memoization//
+    console.log('\nProblem 11: Memoization');
+
+    function func(obj1, obj2) {
+        return { name: 'Kit' };
+    };
+
+    var memFunc = tool.memoize(mul);
+    console.log(memFunc(1, 2, 3, 4, 5));
+    console.log(memFunc(1, 2, 3, 4, 5));
+
+    var memFuncObj = tool.memoize(func);
+    console.log(memFuncObj({ prop: 'prop1' }, { prop: 'prop2' }));
+    console.log(memFuncObj({ prop: 'prop1' }, { prop: 'prop2' }));
 })();

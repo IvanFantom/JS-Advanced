@@ -138,11 +138,16 @@ FeaturesNS.Funcs = function () {
 
         return function () {
             var args = slice.call(arguments);
+            var key = JSON.stringify(args);
 
-            if (args in cache)
-                return cache[args];
-            else
-                return (cache[args] = fn.apply(this, args));
+            if (key in cache) {
+                console.log('cache hit');
+                return cache[key];
+            }
+            else {
+                console.log('cache miss, adding new row into cache');
+                return (cache[key] = fn.apply(this, args));
+            }
         };
     };
 
