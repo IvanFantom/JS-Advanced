@@ -37,9 +37,9 @@ FeaturesNS.Funcs = function () {
     }
 
     function curry(/* n,*/ fn /*, args...*/) {
-        var n,
-          slice = Array.prototype.slice,
-          origArgs = slice.call(arguments, 1);
+        var n;
+        var slice = Array.prototype.slice;
+        var origArgs = slice.call(arguments, 1);
 
         if (typeof fn === 'number') {
             n = fn;
@@ -48,27 +48,53 @@ FeaturesNS.Funcs = function () {
             n = fn.length;
         }
 
-        return function () {
+        return function() {
             var args = origArgs.concat(slice.call(arguments));
 
             return args.length < n
-              ? curry.apply(this, [n, fn].concat(args))
-              : fn.apply(this, args);
+                ? curry.apply(this, [n, fn].concat(args))
+                : fn.apply(this, args);
         };
     };
 
-    function map(arr, fn /*, thisp*/) {
+    function fold(array, callback /*[, initialValue]*/) {
+        if (array === null || typeof array === 'undefined') 
+            throw new TypeError('array is null or undefined');
+        if (array.length === 0 && typeof arguments[2] === 'undefined')
+            throw new TypeError('empty array with no initial value');
+        if (typeof callback !== 'function') 
+            throw new TypeError(callback + ' is not a function');
         
-        if (typeof fn != "function")
-            throw new TypeError();
+        var hasInitialValue, previousValue;
 
-        var len = arr.length;
+        if (hasInitialValue = arguments.length > 2) {
+            previousValue = arguments[2];
+        }
+
+        array.forEach(function (currentValue, index) {
+            if (!hasInitialValue) {
+                previousValue = currentValue;
+                hasInitialValue = true;
+            } else {
+                previousValue = callback.call(this, previousValue, currentValue, index, array);
+            }
+        });
+
+        // return the final value of our accumulator
+        return previousValue;
+    };
+
+    function map(array, callback /*, thisp*/) {
+        if (typeof callback != "function")
+            throw new TypeError(callback + ' is not a function');
+
+        var len = array.length;
         var res = new Array(len);
         var thisp = arguments[2];
 
         for (var i = 0; i < len; i++) {
-            if (i in arr)
-                res[i] = fn.call(thisp, arr[i], i, arr);
+            if (i in array)
+                res[i] = callback.call(thisp, array[i], i, array);
         }
 
         return res;
@@ -84,6 +110,26 @@ FeaturesNS.Funcs = function () {
         }
 
         return undefined;
+    };
+
+    function filter(array, callback /*, thisp*/) {
+        if (typeof callback != "function") {
+            throw new TypeError(callback + ' is not a function');
+        }
+        
+        var result = [];
+        var thisp = arguments[1];
+        var len = array.length >>> 0;
+        for (var i = 0; i < len; i++) {
+            if (i in array) {
+                var value = array[i]; // in case fun mutates this
+                if (callback.call(thisp, value, i, array)) {
+                    result.push(value);
+                }
+            }
+        }
+
+        return result;
     };
 
     function memoize(fn) {
@@ -103,8 +149,10 @@ FeaturesNS.Funcs = function () {
     var api = {
         partial: partial,
         curry: curry,
+        fold: fold,
         map: map,
         first: first,
+        filter: filter,
         memoize: memoize,
     };
 
