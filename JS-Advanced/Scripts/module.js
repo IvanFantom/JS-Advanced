@@ -48,7 +48,7 @@ FeaturesNS.Funcs = function () {
             n = fn.length;
         }
 
-        return function() {
+        return function () {
             var args = origArgs.concat(slice.call(arguments));
 
             return args.length < n
@@ -58,13 +58,13 @@ FeaturesNS.Funcs = function () {
     };
 
     function fold(array, callback /*[, initialValue]*/) {
-        if (array === null || typeof array === 'undefined') 
+        if (!array)
             throw new TypeError('array is null or undefined');
-        if (array.length === 0 && typeof arguments[2] === 'undefined')
+        if (array.length === 0)
             throw new TypeError('empty array with no initial value');
-        if (typeof callback !== 'function') 
+        if (typeof callback !== 'function')
             throw new TypeError(callback + ' is not a function');
-        
+
         var hasInitialValue, previousValue;
 
         if (hasInitialValue = arguments.length > 2) {
@@ -87,12 +87,12 @@ FeaturesNS.Funcs = function () {
     function unfold(callback, initialValue) {
         var array = [];
         var currentState = initialValue;
-        
-        while(currentState) {
+
+        do {
             var result = callback(currentState);
             currentState = result.state;
             array.push(result.element);
-        }
+        } while (result);
 
         return array;
     }
@@ -102,12 +102,13 @@ FeaturesNS.Funcs = function () {
             throw new TypeError(callback + ' is not a function');
 
         var len = array.length;
-        var res = new Array(len);
+        var res = [];
         var thisp = arguments[2];
 
         for (var i = 0; i < len; i++) {
-            if (i in array)
+            if (i in array) {
                 res[i] = callback.call(thisp, array[i], i, array);
+            }
         }
 
         return res;
@@ -115,24 +116,26 @@ FeaturesNS.Funcs = function () {
 
     function first(arr, predicateCallback) {
         if (typeof predicateCallback !== 'function') {
-            return undefined;
-        }
-        
-        for (var i = 0; i < arr.length; i++) {
-            if (predicateCallback(arr[i])) return arr[i];
+            return;
         }
 
-        return undefined;
+        var element;
+        for (var i = 0; i < arr.length; i++) {
+            element = arr[i];
+            if (predicateCallback(arr[i])) {
+                return element;
+            }
+        }
     };
 
     function filter(array, callback /*, thisp*/) {
         if (typeof callback != "function") {
             throw new TypeError(callback + ' is not a function');
         }
-        
+
         var result = [];
-        var thisp = arguments[1];
-        var len = array.length >>> 0;
+        var thisp = arguments[2];
+        var len = array.length;
         for (var i = 0; i < len; i++) {
             if (i in array) {
                 var value = array[i]; // in case fun mutates this
@@ -153,7 +156,7 @@ FeaturesNS.Funcs = function () {
         var slice = Array.prototype.slice;
         var args = slice.call(arguments, 1);
 
-        var lazied = function() {
+        var lazied = function () {
             return func.apply(this, args);
         };
 
