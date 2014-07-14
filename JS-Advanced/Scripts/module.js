@@ -84,6 +84,19 @@ FeaturesNS.Funcs = function () {
         return previousValue;
     };
 
+    function unfold(callback, initialValue) {
+        var array = [];
+        var currentState = initialValue;
+        
+        while(currentState) {
+            var result = callback(currentState);
+            currentState = result.state;
+            array.push(result.element);
+        }
+
+        return array;
+    }
+
     function map(array, callback /*, thisp*/) {
         if (typeof callback != "function")
             throw new TypeError(callback + ' is not a function');
@@ -132,6 +145,21 @@ FeaturesNS.Funcs = function () {
         return result;
     };
 
+    function lazy(func /*, [args_for_func]*/) {
+        if (typeof func != "function") {
+            throw new TypeError(func + ' is not a function');
+        }
+
+        var slice = Array.prototype.slice;
+        var args = slice.call(arguments, 1);
+
+        var lazied = function() {
+            return func.apply(this, args);
+        };
+
+        return lazied;
+    };
+
     function memoize(fn) {
         var cache = {};
         var slice = Array.prototype.slice;
@@ -155,9 +183,11 @@ FeaturesNS.Funcs = function () {
         partial: partial,
         curry: curry,
         fold: fold,
+        unfold: unfold,
         map: map,
         first: first,
         filter: filter,
+        lazy: lazy,
         memoize: memoize,
     };
 

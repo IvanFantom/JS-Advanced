@@ -49,6 +49,17 @@
     console.log(tool.fold(someArray, addCallback));
     console.log(tool.fold(someArray, addCallback, 1000));
 
+    //Problem 4: Linear unfold//
+    console.log('\nProblem 4: Linear unfold');
+
+    var result = tool.unfold(function(currentState) {
+        return {
+            element: Math.floor((Math.random() * 100) + 1),
+            state: --currentState
+        };
+    });
+    console.log(result);
+
     //Problem 5: Map//
     console.log('\nProblem 5: Map');
 
@@ -76,6 +87,19 @@
     var average = tool.fold(even, addCallback) / even.length;
     console.log(average);
 
+    //Problem 8: Sum of random numbers//
+    console.log('\nProblem 8: Sum of random numbers');
+
+    var randArr = tool.unfold(function(currentState) {
+        return {
+            element: Math.floor((Math.random() * 100) + 1),
+            state: --currentState
+        };
+    }, 10);
+    console.log('random nums: ' + randArr);
+    var sum = tool.fold(randArr, addCallback);
+    console.log('sum of rand nums: ' + sum);
+
     //Problem 9: First//
     console.log('\nProblem 9: First');
 
@@ -98,6 +122,15 @@
         return element.size === 4;
     });
     console.log(r);
+
+    //Problem 10: Lazy evaluation//
+    console.log('\nProblem 10: Lazy evaluation');
+
+    var lazyFunc = tool.lazy(function(a, b) {
+        return a * a * a + 3 * a * a * b + 3 * a * b * b + b * b * b;
+    }, 2, 3);
+    
+    console.log(lazyFunc());
 
     //Problem 11: Memoization//
     console.log('\nProblem 11: Memoization');
