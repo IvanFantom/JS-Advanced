@@ -1,5 +1,5 @@
 (function() {
-    var tool = new FeaturesNS.Funcs();
+    var tool = new Features.Funcs();
 
     //Problem 1: Partial Application//
     console.log('Problem 1: Partial Application');
@@ -72,7 +72,7 @@
 
     var arr = [1, 2, 3, 4, 5];
     var odd = tool.filter(arr, function (val) {
-        return 0 != val % 2;
+        return 0 !== val % 2;
     });
     console.log(odd);
     
@@ -81,7 +81,7 @@
 
     var nums = [1, 23, 2, 6, 12, 0];
     var even = tool.filter(nums, function(val) {
-        return 0 == val % 2;
+        return 0 === val % 2;
     });
     console.log(even);
     var average = tool.fold(even, addCallback) / even.length;
@@ -137,7 +137,7 @@
 
     function func(obj1, obj2) {
         return { name: 'Kit' };
-    };
+    }
 
     var memFunc = tool.memoize(mul);
     console.log(memFunc(1, 2, 3, 4, 5));
