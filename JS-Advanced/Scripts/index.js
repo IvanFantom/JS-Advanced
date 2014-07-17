@@ -25,18 +25,13 @@
     //Problem 2: Currying//
     console.log('\nProblem 2: Currying');
 
-    function add(a, b, c) {
-        var total = a + b + c;
-        return a + '+' + b + '+' + c + '=' + total;
+    function add(a, b, c, d) {
+        var total = a + b + c + d;
+        return a + '+' + b + '+' + c + '+' + d + '=' + total;
     }
 
-    var add1curry = tool.curry(add, 1);
-    console.log(add1curry(2, 3));  // "1+2+3=6"
-    console.log(add1curry(4, 5));  // "1+4+5=10"
-
-    var add1and2curry = add1curry(2);
-    console.log(add1and2curry(3)); // "1+2+3=6"
-    console.log(add1and2curry(4)); // "1+2+4=7"
+    var curriedSum = tool.curry(add);
+    console.log(curriedSum(1)(2)(3)(4));
 
     //Problem 3: Linear fold//
     console.log('\nProblem 3: Linear fold');
@@ -51,13 +46,21 @@
 
     //Problem 4: Linear unfold//
     console.log('\nProblem 4: Linear unfold');
+    
+    function randomNumArray(currentState) {
+        if (!currentState) {
+            return null;
+        }
 
-    var result = tool.unfold(function(currentState) {
+        currentState--;
+        
         return {
             element: Math.floor((Math.random() * 100) + 1),
-            state: --currentState
+            state: currentState
         };
-    });
+    }
+    
+    var result = tool.unfold(randomNumArray, 10);
     console.log(result);
 
     //Problem 5: Map//
@@ -90,12 +93,7 @@
     //Problem 8: Sum of random numbers//
     console.log('\nProblem 8: Sum of random numbers');
 
-    var randArr = tool.unfold(function(currentState) {
-        return {
-            element: Math.floor((Math.random() * 100) + 1),
-            state: --currentState
-        };
-    }, 10);
+    var randArr = tool.unfold(randomNumArray, 10);
     console.log('random nums: ' + randArr);
     var sum = tool.fold(randArr, addCallback);
     console.log('sum of rand nums: ' + sum);

@@ -33,24 +33,15 @@ Features.Funcs = function () {
         };
     }
 
-    function curry(/* n,*/ fn /*, args...*/) {
-        var n;
+    function curry(func) {
         var slice = Array.prototype.slice;
-        var origArgs = slice.call(arguments, 1);
+        var totalArgsCount = func.length;
+        var args = [];
 
-        if (typeof fn === 'number') {
-            n = fn;
-            fn = origArgs.shift();
-        } else {
-            n = fn.length;
-        }
+        return function accumulator() {
+            args = args.concat(slice.call(arguments));
 
-        return function () {
-            var args = origArgs.concat(slice.call(arguments));
-
-            return args.length < n
-                ? curry.apply(this, [n, fn].concat(args))
-                : fn.apply(this, args);
+            return args.length < totalArgsCount ? accumulator : func.apply(null, args);
         };
     }
 
@@ -83,12 +74,18 @@ Features.Funcs = function () {
     function unfold(callback, initialValue) {
         var array = [];
         var currentState = initialValue;
+        var result;
 
-        do {
-            var result = callback(currentState);
+        while(true) {
+            result = callback(currentState);
+
+            if (!result) {
+                break;
+            }
+
             currentState = result.state;
             array.push(result.element);
-        } while (result);
+        }
 
         return array;
     }
