@@ -62,20 +62,21 @@ Features.Funcs = function () {
         if (typeof callback !== 'function')
             throw new TypeError(callback + ' is not a function');
 
-        var hasInitialValue, previousValue;
+        var previousValue;
+        var startIndex;
 
-        if (hasInitialValue = arguments.length > 2) {
+        if (arguments.length > 2) {
             previousValue = arguments[2];
+            startIndex = 0;
+        } else {
+            previousValue = array[0];
+            startIndex = 1;
         }
 
-        array.forEach(function (currentValue, index) {
-            if (!hasInitialValue) {
-                previousValue = currentValue;
-                hasInitialValue = true;
-            } else {
-                previousValue = callback.call(this, previousValue, currentValue, index, array);
-            }
-        });
+        var len = array.length;
+        for (var i = startIndex; i < len; i++) {
+            previousValue = callback.call(this, previousValue, array[i], i, array);
+        }
 
         return previousValue;
     }
@@ -93,17 +94,17 @@ Features.Funcs = function () {
         return array;
     }
 
-    function map(array, callback /*, thisp*/) {
+    function map(array, callback /*, context*/) {
         if (typeof callback !== "function")
             throw new TypeError(callback + ' is not a function');
 
         var len = array.length;
         var res = [];
-        var thisp = arguments[2];
+        var context = arguments[2];
 
         for (var i = 0; i < len; i++) {
             if (i in array) {
-                res[i] = callback.call(thisp, array[i], i, array);
+                res[i] = callback.call(context, array[i], i, array);
             }
         }
 
